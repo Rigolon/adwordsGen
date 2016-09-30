@@ -1,0 +1,160 @@
+
+<!DOCTYPE>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Ferramentas</title>
+	<link href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/lumen/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/skins/all.css" />
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h3>Tipos</h3>
+				<div class="panel panel-primary">
+					<div class="panel-heading">Tipos</div>
+					<div class="panel-body">
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" name="opcoes" value="1">
+								&nbsp;&nbsp;Ampla </label>
+						</div>
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" name="opcoes" value="2">
+								&nbsp;&nbsp;Ampla Modificada </label>
+						</div>
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" name="opcoes" value="3">
+								&nbsp;&nbsp;Exata </label>
+						</div>
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" name="opcoes" value="4">
+								&nbsp;&nbsp;Frase </label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col-md-6">
+						<h3>Palavras</h3>
+						<hr>
+						<div class="form-group">
+							<textarea id="palavras1" class="form-control" rows="20"></textarea>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<h3>Ampliar</h3>
+						<hr>
+						<div class="form-group">
+							<textarea id="palavras2" class="form-control" rows="20"></textarea>
+						</div>
+					</div>
+					<div class="col-md-12"> <a class="btn btn-primary gerarBtn" href="javascript:;"> Gerar </a> </div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<h3>Resultado
+					<button id="copiarResultado" class="btn btn-success pull-right"> Copiar resultado </button>
+				</h3>
+				<hr>
+				<pre style="min-height:415" class="resultado"></pre>
+			</div>
+		</div>
+		<div class="row"> </div>
+	</div>
+	
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/zclip/1.1.2/jquery.zclip.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/icheck.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+
+	<script type="text/javascript">
+
+		$(document).ready(function() {
+								   
+		    $('#copiarResultado').zclip({
+		        path: 'https://cdnjs.cloudflare.com/ajax/libs/zclip/1.1.2/ZeroClipboard.swf',
+		        copy: function(){ return $('.resultado').text() }
+		    });
+			
+		});
+
+		(function($){
+
+			$(function()
+			{
+
+				$('.gerarBtn').on('click',function(){
+					var opcoes = $('input[name=opcoes]:checked','.panel-body'),
+						palavras1 = $('#palavras1').val(),
+						palavras2 = $('#palavras2').val(),
+						configuracoes = Array(),
+						resultado = Array(),
+						contador = 0,
+						textoFinal = '';
+
+					palavras1=palavras1.replace(/(\n)+/g,"\n");                                                                                
+					palavras2=palavras2.replace(/(\n)+/g,"\n");
+					palavras1=palavras1.replace(/\n$/g,"");
+					palavras2=palavras2.replace(/\n$/g,"");
+
+					$('#palavras1').val(palavras1);
+					$('#palavras2').val(palavras2);
+
+					$.each(opcoes,function(i,v){
+						configuracoes[i]=$(v).val();
+					});
+
+					palavras1 = palavras1.split("\n");
+					palavras2 = palavras2.split("\n");
+
+					$.each( palavras1, function(i,v){palavras1[i]=v.trim();} );
+					$.each( palavras2, function(i,v){palavras2[i]=v.trim();} );
+
+					$.each( palavras1, function (i,v){
+						$.each( palavras2, function (ii,vv){
+							$.each( configuracoes, function (iii,vvv){
+								if( palavras1[i] != '' && palavras2[ii] != '' ){
+									var texto = palavras1[i] + ' ' + palavras2[ii], textoTmp=texto;
+								} else if ( palavras1[i] == '' ){
+									var texto = palavras2[ii], textoTmp=texto;
+								} else {
+									var texto = palavras1[i], textoTmp=texto;
+								}
+					
+								if(vvv==1){resultado[contador]=texto;};
+								if(vvv==2){resultado[contador]=textoTmp="+"+textoTmp.replace(/(\s)/g," +");};
+								if(vvv==3){resultado[contador]='['+texto+']';};
+								if(vvv==4){resultado[contador]='"'+texto+'"';};
+								
+								contador++;
+								
+							});
+						});
+					});
+
+					textoFinal = resultado.join("\n");
+					
+					$('pre.resultado').text( textoFinal );                                
+				});
+
+				$('input[type=radio],input[type=checkbox]').iCheck({
+					checkboxClass: 'icheckbox_square-blue',
+					radioClass: 'iradio_square-blue',
+					inheritID: true
+				});
+
+			});
+		})(jQuery);
+
+	</script>
+</body>
+</html>
